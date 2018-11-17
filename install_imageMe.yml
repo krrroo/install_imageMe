@@ -1,0 +1,25 @@
+---
+- hosts: imageMe_nodes
+  become: yes
+  tasks:
+   - name : "Git installation"
+     yum:
+       name: git
+       state: latest
+   - name : "Cloning git repository"
+     git:
+       repo: https://github.com/jkanclerz/google-search-python.git
+       dest: /bin/imageMe
+   - name: "Saving environment variables to the file"
+     lineinfile:
+       dest: /etc/environment
+       line: "{{item}}"
+     with_items:
+        - export SEARCH_ENGINE_ID=006879359584856769921:rplfy3clmho
+        - export GOOGLE_CLOUD_API_KEY=AIzaSyDLLC1pqOxkWA8jUjM-Cfwbl_13Sh_2t98
+   - name: "ImageMe script added"
+     copy:
+       src: ./imageMe.sh
+       dest: /bin/imageMe
+       owner: ec2-user
+       mode: 0555
